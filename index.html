@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CMC Ethanol Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f3ef; --card:#ffffff; --line:#e3e1d9; --line-2:#efede7;
+  --ink:#171a18; --ink-2:#4d524e; --ink-3:#7c817d;
+  --green:#1f6f3f; --green-ink:#1b5e36; --red:#b3261e; --gold:#b8862b;
+  --bar:#2c7a4b; --ly:#6b7280; --avg:#c0912f;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --header:#151b18;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
+a{color:inherit}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+.hdr{background:var(--header);color:#fff}
+.hdr-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.wordmark{display:flex;align-items:center;gap:12px}
+.mark{border:1.5px solid rgba(255,255,255,.75);padding:3px 8px;border-radius:3px;font-weight:700;letter-spacing:.14em;font-size:13px}
+.wm-title{font-weight:600;font-size:15px;letter-spacing:.01em}
+.wm-sub{font-size:12px;color:rgba(255,255,255,.62);margin-top:1px}
+.hdr-right{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:6px 10px;font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.04)}
+.chip b{color:#fff;font-weight:600}
+.chip.warn{border-color:rgba(232,180,80,.55);color:#f0d59a}
+
+/* tabs */
+.tabs{background:var(--header);border-bottom:1px solid #2a332e}
+.tabs-in{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:6px}
+.tab{appearance:none;background:none;border:0;color:rgba(255,255,255,.62);font:inherit;font-weight:500;padding:12px 14px 13px;cursor:pointer;border-bottom:3px solid transparent;font-size:13.5px}
+.tab small{display:block;font-size:11px;color:rgba(255,255,255,.4);font-weight:400;margin-top:1px}
+.tab[aria-selected="true"]{color:#fff;border-bottom-color:#5cc487}
+.tab:hover{color:#fff}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:22px 24px 40px}
+.panel[hidden]{display:none}
+.kpis{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+@media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.kpis{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.k-label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.k-big{font-size:38px;font-weight:600;letter-spacing:-.02em;line-height:1.05;margin:8px 0 2px;color:var(--ink)}
+.k-big small{font-size:14px;font-weight:500;color:var(--ink-3);letter-spacing:0;margin-left:6px}
+.k-delta{font-size:26px;font-weight:600;letter-spacing:-.01em;margin:8px 0 2px}
+.k-sub{font-size:12.5px;color:var(--ink-2)}
+.up{color:var(--green-ink)} .down{color:var(--red)} .flat{color:var(--ink-2)}
+.driven{margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px}
+.driven .k-label{font-size:10.5px}
+.driven ul{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:3px 18px}
+.driven li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--ink-2)}
+.driven li b{font-weight:600}
+
+.chart-card{margin-bottom:14px}
+.chart-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.chart-title{font-weight:600;font-size:15px}
+.chart-unit{color:var(--ink-3);font-size:12.5px}
+.range{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.range button{appearance:none;border:0;background:#fff;font:inherit;font-size:12px;padding:5px 11px;color:var(--ink-2);cursor:pointer;border-right:1px solid var(--line)}
+.range button:last-child{border-right:0}
+.range button[aria-pressed="true"]{background:#eef4ef;color:var(--green-ink);font-weight:600}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:2px 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.line{height:2px;border-radius:1px;width:16px}
+.sw.dash{height:0;border-top:2px dashed var(--avg);width:16px;background:none}
+.plot{position:relative}
+.plot svg{display:block;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:#171a18;color:#fff;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.35;min-width:150px;box-shadow:0 4px 14px rgba(0,0,0,.18);display:none;z-index:2}
+.tip .t-h{font-weight:600;margin-bottom:4px;color:#fff}
+.tip .t-r{display:flex;justify-content:space-between;gap:14px;color:rgba(255,255,255,.85)}
+.tip .t-r b{color:#fff;font-weight:600}
+.tip .t-tot{border-top:1px solid rgba(255,255,255,.18);margin-top:4px;padding-top:4px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 10px;border-bottom:1px solid var(--line-2);text-align:right}
+tr.total td{font-weight:600;background:#faf9f6}
+tr:last-child td{border-bottom:0}
+td.chg.up{color:var(--green-ink)} td.chg.down{color:var(--red)}
+.tbl-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.tbl-head .chart-unit{margin-left:auto}
+
+.notes{color:var(--ink-3);font-size:12px;margin-top:18px;line-height:1.5}
+.notes p{margin:4px 0}
+.foot{max-width:1180px;margin:0 auto;padding:0 24px 30px;color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media print{.hdr,.tabs{background:#fff;color:#000;border-bottom:1px solid #000}.tab{color:#000}.chip{color:#000;border-color:#000}.range{display:none}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="wordmark">
+      <span class="mark">CMC</span>
+      <div>
+        <div class="wm-title">Ethanol Market Intelligence</div>
+        <div class="wm-sub">Weekly EIA supply snapshot, prepared for Commodity Marketing Company</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="chip">Data week ending <b id="asof"></b> &middot; released <b id="released"></b></div>
+      <div class="chip warn" id="nextchip"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Report sections">
+  <div class="tabs-in" role="tablist">
+    <button class="tab" role="tab" id="tab-prod" aria-selected="true" aria-controls="panel-prod">Ethanol Production<small>EIA Table 2 &middot; Inputs and Production by PAD District</small></button>
+    <button class="tab" role="tab" id="tab-stk" aria-selected="false" aria-controls="panel-stk">Ethanol Stocks<small>EIA Table 5 &middot; Stocks by PAD District</small></button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section class="panel" id="panel-prod" role="tabpanel" aria-labelledby="tab-prod"></section>
+  <section class="panel" id="panel-stk" role="tabpanel" aria-labelledby="tab-stk" hidden></section>
+</main>
+
+<footer class="foot">
+  <div>Source: U.S. Energy Information Administration, Weekly Petroleum Status Report, Tables 2 and 5. All figures are EIA's published weekly estimates.</div>
+  <div>Built for Commodity Marketing Company by PrismAgent Solutions</div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.CMC_DATA;
+  const REG = D.regions;
+  const SHORT = ["PADD 1","PADD 2","PADD 3","PADD 4","PADD 5"];
+  const SERIES = ["var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)"];
+  const fmtDate = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); };
+  const fmtShort = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
+  const n0 = v => v.toLocaleString('en-US');
+  const mm = v => (v/1000).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+  const pct = (a,b) => b ? ((a-b)/b*100) : 0;
+  const sgn = v => v>0?'+':'';
+  const cls = v => v>0?'up':(v<0?'down':'flat');
+  const fp = v => sgn(v)+v.toFixed(1)+'%';
+
+  document.getElementById('asof').textContent = fmtDate(D.asOf);
+  document.getElementById('released').textContent = fmtDate(D.released);
+  document.getElementById('nextchip').innerHTML = 'Next release <b>'+D.nextRelease+'</b>';
+
+  function kpi(label, big, unit, sub){ return `<div class="card"><div class="k-label">${label}</div><div class="k-big num">${big}<small>${unit}</small></div><div class="k-sub">${sub}</div>${''}</div>`; }
+  function kdelta(label, delta, sub){ return `<div class="card"><div class="k-label">${label}</div><div class="k-delta num ${cls(delta)}">${fp(delta)}</div><div class="k-sub">${sub}</div></div>`; }
+
+  function buildPanel(kind){
+    const S = D[kind]; const W = S.weeks; const cur = W[W.length-1], prev = W[W.length-2];
+    const isStk = kind==='stocks';
+    const val = v => isStk ? mm(v) : n0(v);
+    const unit = isStk ? 'million bbl' : 'kb/d';
+    const chg = cur.us - prev.us;
+    const wow = pct(cur.us, prev.us);
+    const contrib = cur.p.map((v,i)=>({i, d: v - prev.p[i]})).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+    const driven = contrib.map(c=>`<li><span>${REG[c.i]}</span><b class="num ${cls(c.d)}">${sgn(c.d)}${isStk? mm(c.d) : n0(c.d)}</b></li>`).join('');
+
+    const kpis = `
+      <div class="kpis">
+        <div class="card">
+          <div class="k-label">${isStk?'Ending stocks':'Production'} &middot; week ending ${fmtDate(cur.d)}</div>
+          <div class="k-big num">${val(cur.us)}<small>${unit}</small></div>
+          <div class="k-sub"><span class="num ${cls(chg)}"><b>${sgn(chg)}${val(chg)}</b> (${fp(wow)})</span> vs prior week of ${val(prev.us)}</div>
+          <div class="driven"><div class="k-label">Week-over-week change by district</div><ul>${driven}</ul></div>
+        </div>
+        ${kdelta('vs same week last year', pct(cur.us, S.yearAgo.us), `Year ago: <span class="num">${val(S.yearAgo.us)}</span> ${unit}`)}
+        ${kdelta('vs 4-week average', pct(cur.us, S.fourWeek[0]), `4-week avg: <span class="num">${val(S.fourWeek[0])}</span> ${unit}`)}
+        ${kdelta('vs 5-year average', pct(cur.us, S.avg5.us), `Same week, 2021 to 2025: <span class="num">${val(S.avg5.us)}</span> ${unit}`)}
+      </div>`;
+
+    const legend = isStk
+      ? SHORT.map((s,i)=>`<span><i class="sw" style="background:${SERIES[i]}"></i>${REG[i]}</span>`).join('')
+      : `<span><i class="sw" style="background:var(--bar)"></i>This year</span><span><i class="sw line" style="background:var(--ly)"></i>Same week last year</span><span><i class="sw dash"></i>5-year average</span>`;
+
+    const chart = `
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div class="chart-title">${isStk?'Weekly ending stocks by district':'Weekly U.S. production against prior year and the 5-year average'}</div>
+          <div class="chart-unit">${isStk?'million barrels':'thousand barrels per day'}</div>
+          <div class="range" role="group" aria-label="Range">
+            <button data-r="12">12 wk</button><button data-r="26">26 wk</button><button data-r="52" aria-pressed="true">52 wk</button>
+          </div>
+        </div>
+        <div class="legend">${legend}</div>
+        <div class="plot" id="plot-${kind}"><div class="tip"></div></div>
+      </div>`;
+
+    const rows = [['U.S. Total', cur.us, prev.us, S.yearAgo.us, S.fourWeek[0], S.avg5.us, true]]
+      .concat(REG.map((r,i)=>[r, cur.p[i], prev.p[i], S.yearAgo.p[i], S.fourWeek[i+1], S.avg5.p[i], false]));
+    const tbody = rows.map(([r,c,p,ya,w4,a5,tot])=>{
+      const d = c-p; return `<tr class="${tot?'total':''}"><td>${r}</td><td class="num">${val(c)}</td><td class="num">${val(p)}</td><td class="num chg ${cls(d)}">${sgn(d)}${val(d)}</td><td class="num">${val(ya)}</td><td class="num chg ${cls(c-ya)}">${fp(pct(c,ya))}</td><td class="num">${val(w4)}</td><td class="num">${val(a5)}</td></tr>`;
+    }).join('');
+    const table = `
+      <div class="card">
+        <div class="tbl-head"><div class="chart-title">${isStk?'Ending stocks by PAD district':'Production by PAD district'}</div><div class="chart-unit">${isStk?'million barrels':'thousand barrels per day'}</div></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Region</th><th>Week ending ${fmtShort(cur.d)}</th><th>Prior week</th><th>Change</th><th>Year ago</th><th>vs year ago</th><th>4-wk avg</th><th>5-yr avg</th></tr></thead>
+          <tbody>${tbody}</tbody></table></div>
+        <div class="notes">
+          <p>Changes are computed from EIA's published rounded figures and can differ by one in the last digit from the difference column in EIA's own table, which EIA derives from unrounded data.</p>
+          <p>5-year average is the same calendar week averaged across 2021 through 2025. 4-week average is the current week and the three prior weeks.</p>
+          <p>${D.holidayNote}</p>
+        </div>
+      </div>`;
+
+    document.getElementById(kind==='stocks'?'panel-stk':'panel-prod').innerHTML = kpis + chart + table;
+    const plot = document.getElementById('plot-'+kind);
+    let range = 52;
+    const draw = () => isStk ? drawStacked(plot, W.slice(-range)) : drawProd(plot, W.slice(-range));
+    plot.parentElement.querySelectorAll('.range button').forEach(b=>b.addEventListener('click',()=>{
+      plot.parentElement.querySelectorAll('.range button').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true'); range = +b.dataset.r; draw();
+    }));
+    draw();
+    window.addEventListener('resize', draw);
+  }
+
+  // ---------- charts ----------
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a={}) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
+  function niceTicks(lo, hi, n){ const span = hi-lo; const raw = span/n; const mag = Math.pow(10, Math.floor(Math.log10(raw))); const norm = raw/mag; const step = (norm<1.5?1:norm<3?2:norm<7?5:10)*mag; const t=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) t.push(+v.toFixed(6)); return {t, step}; }
+
+  function frame(plot, Wn){
+    const width = Math.max(plot.clientWidth, 480), height = Math.round(Math.min(360, Math.max(240, width*0.34)));
+    const m = {t:14, r:16, b:34, l:54};
+    const svg = el('svg',{viewBox:`0 0 ${width} ${height}`, width, height, role:'img'});
+    return {svg, width, height, m, iw: width-m.l-m.r, ih: height-m.t-m.b};
+  }
+
+  function drawProd(plot, W){
+    plot.querySelector('svg')?.remove();
+    const {svg,width,height,m,iw,ih} = frame(plot);
+    const vals = W.flatMap(w=>[w.us, w.ly||w.us, w.a5||w.us]);
+    let lo = Math.min(...vals), hi = Math.max(...vals); const pad=(hi-lo)*0.18; lo=Math.floor((lo-pad)/50)*50; hi=Math.ceil((hi+pad)/50)*50;
+    const y = v => m.t + ih - (v-lo)/(hi-lo)*ih;
+    const n = W.length, slot = iw/n, bw = Math.max(4, Math.min(22, slot*0.62));
+    const x = i => m.l + slot*i + slot/2;
+    const {t} = niceTicks(lo,hi,5);
+    t.forEach(v=>{ svg.appendChild(el('line',{x1:m.l,x2:m.l+iw,y1:y(v),y2:y(v),stroke:'#ecebe5','stroke-width':1})); const tx=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end','font-size':11,fill:'#7c817d','font-family':'var(--mono)'}); tx.textContent=n0(v); svg.appendChild(tx); });
+    // bars
+    W.forEach((w,i)=>{ const h = y(lo)-y(w.us); svg.appendChild(el('rect',{x:x(i)-bw/2, y:y(w.us), width:bw, height:Math.max(0,h), rx:3, fill:'var(--bar)'})); });
+    // last-year line
+    const path = (key, attrs) => { let d=''; W.forEach((w,i)=>{ if(w[key]==null) return; d += (d?'L':'M')+x(i)+' '+y(w[key])+' '; }); svg.appendChild(el('path',Object.assign({d,fill:'none','stroke-width':2,'stroke-linejoin':'round'},attrs))); };
+    path('ly',{stroke:'var(--ly)'}); path('a5',{stroke:'var(--avg)','stroke-dasharray':'5 4'});
+    // x labels
+    const every = Math.ceil(n/8);
+    W.forEach((w,i)=>{ if((n-1-i)%every!==0) return; const tx=el('text',{x:x(i),y:height-12,'text-anchor':'middle','font-size':11,fill:'#7c817d'}); tx.textContent=fmtShort(w.d); svg.appendChild(tx); });
+    svg.appendChild(el('line',{x1:m.l,x2:m.l+iw,y1:y(lo),y2:y(lo),stroke:'#d6d4cc'}));
+    // hover
+    const cross = el('line',{x1:0,x2:0,y1:m.t,y2:m.t+ih,stroke:'#9aa09b','stroke-dasharray':'3 3',opacity:0});
+    svg.appendChild(cross);
+    const tip = plot.querySelector('.tip');
+    const hit = el('rect',{x:m.l,y:m.t,width:iw,height:ih,fill:'transparent'}); svg.appendChild(hit);
+    hit.addEventListener('mousemove',e=>{ const r=svg.getBoundingClientRect(); const px=(e.clientX-r.left)*(width/r.width); const i=Math.max(0,Math.min(n-1,Math.floor((px-m.l)/slot))); const w=W[i]; cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i)); cross.setAttribute('opacity',1);
+      tip.innerHTML = `<div class="t-h">Week ending ${fmtDate(w.d)}</div><div class="t-r"><span>This year</span><b>${n0(w.us)}</b></div>${w.ly!=null?`<div class="t-r"><span>Last year</span><b>${n0(w.ly)}</b></div>`:''}${w.a5!=null?`<div class="t-r"><span>5-yr avg</span><b>${n0(w.a5)}</b></div>`:''}<div class="t-r t-tot"><span>PADD 2 share</span><b>${(w.p[1]/w.us*100).toFixed(1)}%</b></div>`;
+      tip.style.display='block'; const lx = x(i)*(r.width/width); tip.style.left = Math.min(lx+14, r.width-170)+'px'; tip.style.top = Math.max(0,(e.clientY-r.top)-70)+'px'; });
+    hit.addEventListener('mouseleave',()=>{tip.style.display='none'; cross.setAttribute('opacity',0);});
+    plot.appendChild(svg);
+  }
+
+  function drawStacked(plot, W){
+    plot.querySelector('svg')?.remove();
+    const {svg,width,height,m,iw,ih} = frame(plot);
+    const hi = Math.ceil(Math.max(...W.map(w=>w.us))*1.08/1000)*1000, lo = 0;
+    const y = v => m.t + ih - (v-lo)/(hi-lo)*ih;
+    const n = W.length, slot = iw/n, bw = Math.max(4, Math.min(24, slot*0.64));
+    const x = i => m.l + slot*i + slot/2;
+    const {t} = niceTicks(lo,hi,5);
+    t.forEach(v=>{ svg.appendChild(el('line',{x1:m.l,x2:m.l+iw,y1:y(v),y2:y(v),stroke:'#ecebe5'})); const tx=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end','font-size':11,fill:'#7c817d','font-family':'var(--mono)'}); tx.textContent=(v/1000).toFixed(0); svg.appendChild(tx); });
+    const order = [1,0,2,4,3]; // Midwest at the base, then East, Gulf, West, Rocky (smallest on top)
+    W.forEach((w,i)=>{ let acc=0; order.forEach((k,idx)=>{ const v=w.p[k]; const y0=y(acc+v), y1=y(acc); const gap = idx===0?0:2; const h=Math.max(0,y1-y0-gap); svg.appendChild(el('rect',{x:x(i)-bw/2,y:y0,width:bw,height:h,rx:idx===order.length-1?3:0,fill:SERIES[k]})); acc+=v; }); });
+    const every = Math.ceil(n/8);
+    W.forEach((w,i)=>{ if((n-1-i)%every!==0) return; const tx=el('text',{x:x(i),y:height-12,'text-anchor':'middle','font-size':11,fill:'#7c817d'}); tx.textContent=fmtShort(w.d); svg.appendChild(tx); });
+    svg.appendChild(el('line',{x1:m.l,x2:m.l+iw,y1:y(lo),y2:y(lo),stroke:'#d6d4cc'}));
+    const tip = plot.querySelector('.tip');
+    const hit = el('rect',{x:m.l,y:m.t,width:iw,height:ih,fill:'transparent'}); svg.appendChild(hit);
+    const hl = el('rect',{x:0,y:m.t,width:slot,height:ih,fill:'#000',opacity:0}); svg.insertBefore(hl, svg.firstChild.nextSibling);
+    hit.addEventListener('mousemove',e=>{ const r=svg.getBoundingClientRect(); const px=(e.clientX-r.left)*(width/r.width); const i=Math.max(0,Math.min(n-1,Math.floor((px-m.l)/slot))); const w=W[i]; hl.setAttribute('x',m.l+slot*i); hl.setAttribute('opacity',0.04);
+      tip.innerHTML = `<div class="t-h">Week ending ${fmtDate(w.d)}</div>` + [1,0,2,4,3].map(k=>`<div class="t-r"><span><i class="sw" style="background:${SERIES[k]};width:8px;height:8px;margin-right:6px;display:inline-block;border-radius:2px"></i>${SHORT[k]}</span><b>${mm(w.p[k])}</b></div>`).join('') + `<div class="t-r t-tot"><span>U.S. total</span><b>${mm(w.us)}</b></div>`;
+      tip.style.display='block'; const lx = x(i)*(r.width/width); tip.style.left = Math.min(lx+14, r.width-180)+'px'; tip.style.top = Math.max(0,(e.clientY-r.top)-90)+'px'; });
+    hit.addEventListener('mouseleave',()=>{tip.style.display='none'; hl.setAttribute('opacity',0);});
+    plot.appendChild(svg);
+  }
+
+  // tabs
+  const tabs = [['tab-prod','panel-prod'],['tab-stk','panel-stk']];
+  tabs.forEach(([t,p])=>document.getElementById(t).addEventListener('click',()=>{
+    tabs.forEach(([tt,pp])=>{ document.getElementById(tt).setAttribute('aria-selected', tt===t); document.getElementById(pp).hidden = pp!==p; });
+    window.dispatchEvent(new Event('resize'));
+    history.replaceState(null,'', '#'+(t==='tab-prod'?'production':'stocks'));
+  }));
+  buildPanel('production'); buildPanel('stocks');
+  if(location.hash==='#stocks') document.getElementById('tab-stk').click();
+})();
+</script>
+</body>
+</html>
