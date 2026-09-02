@@ -155,8 +155,8 @@ window.CMC_DATA = {"asOf": "2026-08-28", "released": "2026-09-02", "nextRelease"
   const mm = v => (v/1000).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
   const pct = (a,b) => b ? ((a-b)/b*100) : 0;
   const sgn = v => v>0?'+':'';
-  const cls = v => v>0?'up':(v<0?'down':'flat');
-  const fp = v => sgn(v)+v.toFixed(1)+'%';
+  const cls = v => { const r = Math.round(v*10)/10; return r>0?'up':(r<0?'down':'flat'); };
+  const fp = v => { const r = Math.round(v*10)/10; return r===0 ? '0.0%' : (r>0?'+':'')+r.toFixed(1)+'%'; };
 
   document.getElementById('asof').textContent = fmtDate(D.asOf);
   document.getElementById('released').textContent = fmtDate(D.released);
