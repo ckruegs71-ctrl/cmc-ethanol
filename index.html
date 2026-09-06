@@ -52,8 +52,22 @@ a{color:inherit}
 .wrap{max-width:1180px;margin:0 auto;padding:22px 24px 40px}
 .panel[hidden]{display:none}
 .kpis{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.kpis-blend{grid-template-columns:1.3fr 1fr 1.3fr 1fr}
 @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}}
-@media (max-width:560px){.kpis{grid-template-columns:1fr}}
+
+/* Phones: the page itself never scrolls sideways. Card rows become
+   swipe rows that scroll in place, with the next card peeking in. */
+html,body{overflow-x:hidden}
+@media (max-width:640px){
+  .hdr-in,.wrap,.tabs-in{padding-left:16px;padding-right:16px}
+  .tabs-in{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs-in::-webkit-scrollbar{display:none}
+  .tab{white-space:nowrap;flex:0 0 auto;padding:12px 12px 13px}
+  .tab small{display:none}
+  .kpis{display:flex!important;grid-template-columns:none!important;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:12px;margin:0 -16px 14px;padding:2px 16px 10px;scrollbar-width:none}
+  .kpis::-webkit-scrollbar{display:none}
+  .kpis>.card{flex:0 0 80%;min-width:0;scroll-snap-align:center}
+}
 .card{background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);border:1px solid rgba(227,225,217,.9);border-radius:8px;padding:18px 20px;box-shadow:0 10px 28px rgba(23,32,24,.10)}
 .k-label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
 .k-big{font-size:38px;font-weight:600;letter-spacing:-.02em;line-height:1.05;margin:8px 0 2px;color:var(--ink)}
@@ -311,7 +325,7 @@ window.CMC_DATA = {"asOf": "2026-08-28", "released": "2026-09-02", "nextRelease"
     const W = B.weeks; const cur = W[W.length-1];
     const ni = B.ni, ex = B.ex;
     const kpis = `
-      <div class="kpis" style="grid-template-columns:1.3fr 1fr 1.3fr 1fr">
+      <div class="kpis kpis-blend">
         <div class="card">
           <div class="k-label">Blender net input &middot; week ending ${fmtDate(cur.d)}</div>
           <div class="k-big num">${n0(ni.cur)}<small>kb/d</small></div>
@@ -476,6 +490,7 @@ window.CMC_DATA = {"asOf": "2026-08-28", "released": "2026-09-02", "nextRelease"
   const tabs = [['tab-prod','panel-prod'],['tab-stk','panel-stk'],['tab-blend','panel-blend'],['tab-gas','panel-gas']];
   tabs.forEach(([t,p])=>document.getElementById(t).addEventListener('click',()=>{
     tabs.forEach(([tt,pp])=>{ document.getElementById(tt).setAttribute('aria-selected', tt===t); document.getElementById(pp).hidden = pp!==p; });
+    document.getElementById(t).scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
     window.dispatchEvent(new Event('resize'));
     history.replaceState(null,'', '#'+(t==='tab-prod'?'production':t==='tab-stk'?'stocks':t==='tab-blend'?'blending':'gasoline'));
   }));
