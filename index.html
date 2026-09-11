@@ -14,7 +14,7 @@
   --bg:#f4f3ef; --card:#ffffff; --line:#e3e1d9; --line-2:#efede7;
   --ink:#171a18; --ink-2:#4d524e; --ink-3:#7c817d;
   --green:#1f6f3f; --green-ink:#1b5e36; --red:#b3261e; --gold:#b8862b;
-  --bar:#2c7a4b; --ly:#6b7280; --avg:#e8a821; --y2:#7d5fb2;
+  --bar:#2c7a4b; --ly:#0f75bc; --lygray:#6b7280; --avg:#efc61c; --y2:#e03131;
   --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
   --header:#0f75bc; --brand:#0f75bc;
   --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
@@ -91,6 +91,7 @@ html,body{overflow-x:hidden}
 .range button:last-child{border-right:0}
 .range button[aria-pressed="true"]{background:#eef4ef;color:var(--green-ink);font-weight:600}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:2px 0 8px}
+.legend .lrow{display:flex;gap:16px;flex-wrap:wrap;width:100%}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
 .sw.line{height:2px;border-radius:1px;width:16px}
@@ -209,7 +210,7 @@ window.CMC_DATA = {"asOf":"2026-09-04","released":"2026-09-10","nextRelease":"We
       </div>`;
 
     const legend = isStk
-      ? SHORT.map((s,i)=>`<span><i class="sw" style="background:${SERIES[i]}"></i>${REG[i]}</span>`).join('') + `<span><i class="sw line" style="background:var(--ly)"></i>U.S. total last year</span><span><i class="sw line" style="background:var(--y2)"></i>U.S. total ${Y2}</span><span><i class="sw dash"></i>5-year average</span>`
+      ? `<div class="lrow">` + SHORT.map((s,i)=>`<span><i class="sw" style="background:${SERIES[i]}"></i>${REG[i]}</span>`).join('') + `</div><div class="lrow"><span><i class="sw line" style="background:var(--ly)"></i>U.S. total last year</span><span><i class="sw line" style="background:var(--y2)"></i>U.S. total ${Y2}</span><span><i class="sw dash"></i>5-year average</span></div>`
       : `<span><i class="sw" style="background:var(--bar)"></i>This year</span><span><i class="sw line" style="background:var(--ly)"></i>Same week last year</span><span><i class="sw line" style="background:var(--y2)"></i>Same week ${Y2}</span><span><i class="sw dash"></i>5-year average</span>`;
 
     const chart = `
@@ -437,7 +438,7 @@ window.CMC_DATA = {"asOf":"2026-09-04","released":"2026-09-10","nextRelease":"We
             <button data-r="12">12 wk</button><button data-r="26">26 wk</button><button data-r="52" aria-pressed="true">52 wk</button>
           </div>
         </div>
-        <div class="legend"><span><i class="sw line" style="background:var(--brand)"></i>This year</span><span><i class="sw line" style="background:var(--ly)"></i>Same week last year</span></div>
+        <div class="legend"><span><i class="sw line" style="background:var(--brand)"></i>This year</span><span><i class="sw line" style="background:var(--lygray)"></i>Same week last year</span></div>
         <div class="plot" id="plot-gas"><div class="tip"></div></div>
       </div>`;
     const d2=chg;
@@ -475,7 +476,7 @@ window.CMC_DATA = {"asOf":"2026-09-04","released":"2026-09-10","nextRelease":"We
     const {t} = niceTicks(lo,hi,5);
     t.forEach(v=>{ svg.appendChild(el('line',{x1:m.l,x2:m.l+iw,y1:y(v),y2:y(v),stroke:'#ecebe5','stroke-width':1})); const tx=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end','font-size':11,fill:'#7c817d','font-family':'var(--mono)'}); tx.textContent=n0(v); svg.appendChild(tx); });
     const path = (key, attrs) => { let d=''; W.forEach((w,i)=>{ if(w[key]==null) return; d += (d?'L':'M')+x(i)+' '+y(w[key])+' '; }); svg.appendChild(el('path',Object.assign({d,fill:'none','stroke-width':2.5,'stroke-linejoin':'round'},attrs))); };
-    path('ly',{stroke:'var(--ly)','stroke-width':2});
+    path('ly',{stroke:'var(--lygray)','stroke-width':2});
     path('us',{stroke:'var(--brand)'});
     const every = Math.ceil(n/8);
     W.forEach((w,i)=>{ if((n-1-i)%every!==0) return; const tx=el('text',{x:x(i),y:height-12,'text-anchor':'middle','font-size':11,fill:'#7c817d'}); tx.textContent=fmtShort(w.d); svg.appendChild(tx); });
